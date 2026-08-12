@@ -1,4 +1,7 @@
 const apiBaseInput = document.getElementById("apiBase");
+if (window.APP_CONFIG && window.APP_CONFIG.apiBase) {
+  apiBaseInput.value = window.APP_CONFIG.apiBase;
+}
 
 function apiBase() {
   return apiBaseInput.value.replace(/\/+$/, "");

@@ -1,0 +1,24 @@
+services:
+  api:
+    build: ./mypb-api
+    container_name: mypb-api
+    restart: unless-stopped
+    volumes:
+      # mypb.db lives on the host, not in the image — swap it without a rebuild
+      - ./mypb-api/mypb.db:/app/mypb.db:ro
+    ports:
+      - "5000:5000"
+
+  frontend:
+    build: ./frontend
+    container_name: mypb-frontend
+    restart: unless-stopped
+    environment:
+      # Must be reachable from the *browser*, not just from this host:
+      # container-to-container networking (e.g. http://api:5000) does not
+      # work here since fetch() runs client-side.
+      API_BASE_URL: ${API_BASE_URL:-http://localhost:5000}
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
