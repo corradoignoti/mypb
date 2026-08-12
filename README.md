@@ -105,6 +105,10 @@ docker compose up -d --build
   templated into `config.js` at container startup, so the same image can
   target any API host.
 
+`api` and `frontend` share a dedicated `backend-net` bridge network,
+isolated from other Compose stacks on the host. `frontend` also stays on
+the `default` network, so its host port mapping (`8080`) keeps working.
+
 **`API_BASE_URL` must be reachable from the browser**, not just from the
 Docker host — a container-internal name like `http://api:5000` will not
 work, since the frontend's JS calls it client-side.
