@@ -8,6 +8,8 @@ services:
       - ./mypb-api/mypb.db:/app/mypb.db:ro
     ports:
       - "5000:5000"
+    networks:
+      - backend-net
 
   frontend:
     build: ./frontend
@@ -22,3 +24,10 @@ services:
       - "8080:80"
     depends_on:
       - api
+    networks:
+      - backend-net
+      - default
+
+networks:
+  backend-net:
+    driver: bridge
