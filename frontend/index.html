@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MyPB &mdash; Carburanti</title>
+  <link rel="stylesheet" href="style.css" />
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+    crossorigin=""
+  />
+</head>
+<body>
+  <header>
+    <h1>MyPB</h1>
+    <div class="api-base">
+      <label for="apiBase">API base</label>
+      <input id="apiBase" type="text" value="http://127.0.0.1:5000" />
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="aroundme">Around me</button>
+    <button class="tab-btn" data-tab="gestore">Cerca gestore</button>
+  </nav>
+
+  <main>
+    <section id="tab-aroundme" class="tab-panel active">
+      <form id="aroundmeForm" class="form-row">
+        <div class="field">
+          <label for="lat">Lat</label>
+          <input id="lat" type="text" placeholder="37.333935" required />
+        </div>
+        <div class="field">
+          <label for="lon">Lon</label>
+          <input id="lon" type="text" placeholder="13.595533" required />
+        </div>
+        <button type="button" id="geoBtn" title="Usa la mia posizione">📍 Usa posizione</button>
+
+        <div class="field">
+          <label for="radius">Raggio (km)</label>
+          <input id="radius" type="number" value="5" min="0.1" step="0.1" />
+        </div>
+        <div class="field">
+          <label for="sort">Ordina per</label>
+          <select id="sort">
+            <option value="alpha">Alfabetico</option>
+            <option value="price">Prezzo (dal meno caro)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="order">Ordine</label>
+          <select id="order">
+            <option value="asc">Crescente</option>
+            <option value="desc">Decrescente</option>
+          </select>
+        </div>
+        <div class="field" id="fuelField">
+          <label for="fuel">Carburante</label>
+          <select id="fuel">
+            <option value="Benzina">Benzina</option>
+            <option value="Gasolio">Gasolio</option>
+            <option value="GPL">GPL</option>
+            <option value="Metano">Metano</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="self">Tipo</label>
+          <select id="self">
+            <option value="">Tutti</option>
+            <option value="1">Self</option>
+            <option value="0">Servito</option>
+          </select>
+        </div>
+
+        <button type="submit">Cerca</button>
+      </form>
+
+      <p id="aroundmeStatus" class="status"></p>
+
+      <div class="view-toggle">
+        <button type="button" class="view-btn active" data-view="table">Tabella</button>
+        <button type="button" class="view-btn" data-view="map">Mappa</button>
+      </div>
+
+      <table id="aroundmeTable" class="results-table hidden">
+        <thead>
+          <tr>
+            <th>Nome impianto</th>
+            <th>Gestore</th>
+            <th>Bandiera</th>
+            <th>Comune</th>
+            <th>Distanza (km)</th>
+            <th id="priceCol" class="hidden">Prezzo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div id="aroundmeMap" class="map hidden"></div>
+    </section>
+
+    <section id="tab-gestore" class="tab-panel">
+      <form id="gestoreForm" class="form-row">
+        <div class="field">
+          <label for="idImpianto">idImpianto</label>
+          <input id="idImpianto" type="text" placeholder="59183" required />
+        </div>
+        <button type="submit">Cerca</button>
+      </form>
+
+      <p id="gestoreStatus" class="status"></p>
+
+      <div id="gestoreDetail" class="detail hidden">
+        <div id="gestoreInfo"></div>
+        <div id="gestoreMap" class="map map-small"></div>
+      </div>
+    </section>
+  </main>
+
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""
+  ></script>
+  <script src="app.js"></script>
+</body>
+</html>
