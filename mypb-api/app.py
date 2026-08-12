@@ -25,10 +25,12 @@ import sqlite3
 
 from flasgger import Swagger
 from flask import Flask, g, jsonify, request
+from flask_cors import CORS
 
 DB_PATH = "mypb.db"
 
 app = Flask(__name__)
+CORS(app)  # allow frontend/ (served from another origin) to call the API
 app.config["SWAGGER"] = {"title": "MyPB API", "uiversion": 3}
 swagger = Swagger(app, template={
     "info": {
@@ -257,9 +259,12 @@ def aroundme():
 
     # bounding-box prefilter (cheap) before exact haversine filter
     deg = radius_km / 111.0  # ~111 km per degree latitude
+    # Latitudine/Longitudine have TEXT affinity; CAST to REAL or a bare
+    # BETWEEN does lexicographic string comparison and silently drops rows.
     rows = db.execute(
         'SELECT * FROM anagrafica_impianti_attivi '
-        'WHERE Latitudine BETWEEN ? AND ? AND Longitudine BETWEEN ? AND ?',
+        'WHERE CAST(Latitudine AS REAL) BETWEEN ? AND ? '
+        'AND CAST(Longitudine AS REAL) BETWEEN ? AND ?',
         (lat - deg, lat + deg, lon - deg, lon + deg),
     ).fetchall()
 
