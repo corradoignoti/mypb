@@ -25,6 +25,39 @@
 
 set -euo pipefail
 
+print_help() {
+    cat <<EOF
+Usage: $(basename "$0") [db_file] [source_dir]
+
+Import every .csv file in source_dir into a SQLite database.
+Each file becomes a table named after the filename (no extension).
+If the table exists it is dropped and fully recreated from the file
+(full replace); otherwise it is created fresh.
+
+Arguments:
+  db_file      Path to SQLite database file (default: mypb.db)
+  source_dir   Directory containing .csv files (default: source-files)
+
+Options:
+  -h, --help   Show this help and exit
+
+CSV format assumed (matches source-files/*.csv):
+  line 1: junk banner line ("Estrazione del ...") -> skipped
+  line 2: pipe-separated column header
+  line 3+: pipe-separated data rows (all columns stored as TEXT)
+
+Examples:
+  $(basename "$0")
+  $(basename "$0") mypb.db source-files
+  $(basename "$0") /tmp/test.db ./other-csvs
+EOF
+}
+
+if [[ "${1:-}" == "-h" || "${1:-}" == "--help" ]]; then
+    print_help
+    exit 0
+fi
+
 DB_FILE="${1:-mypb.db}"
 SRC_DIR="${2:-source-files}"
 
