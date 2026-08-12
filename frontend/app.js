@@ -252,6 +252,7 @@ function showAroundmeMap(data, centerLat, centerLon) {
         ${escapeHtml(it.gestore || "")}<br>
         ${escapeHtml(it.comune || "")} &mdash; ${it.distanceKm} km
         ${priceLine}
+        <br><button class="popup-link-btn" data-id="${escapeHtml(it.idImpianto)}">Dettagli e prezzi</button>
       `);
     aroundmeMarkers.push(marker);
     bounds.push([lat, lon]);
@@ -263,6 +264,14 @@ function showAroundmeMap(data, centerLat, centerLon) {
     aroundmeMapObj.setView([centerLat, centerLon], 13);
   }
 }
+
+// popup "Dettagli e prezzi" button -> jump to gestore tab and fetch full data
+document.addEventListener("click", (e) => {
+  if (!e.target.classList.contains("popup-link-btn")) return;
+  document.querySelector('[data-tab="gestore"]').click();
+  document.getElementById("idImpianto").value = e.target.dataset.id;
+  gestoreForm.requestSubmit();
+});
 
 function showGestoreMap(data) {
   const lat = parseFloat(data.latitudine);
