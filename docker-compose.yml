@@ -7,7 +7,7 @@ services:
       # mypb.db lives on the host, not in the image — swap it without a rebuild
       - ./mypb-api/mypb.db:/app/mypb.db:ro
     ports:
-      - "5000:5000"
+      - "9050:5000"
     networks:
       - backend-net
 
@@ -21,7 +21,7 @@ services:
       # work here since fetch() runs client-side.
       API_BASE_URL: ${API_BASE_URL:-http://localhost:5000}
     ports:
-      - "8080:80"
+      - "9080:80"
     depends_on:
       - api
     networks:
