@@ -8,9 +8,7 @@ services:
       - ./mypb-api/mypb.db:/app/mypb.db:ro
     ports:
       - "9050:5000"
-    networks:
-      - backend-net
-
+   
   frontend:
     build: ./frontend
     container_name: mypb-frontend
@@ -24,9 +22,6 @@ services:
       - "9080:80"
     depends_on:
       - api
-    networks:
-      - backend-net
-      - default
 
 networks:
   backend-net:
