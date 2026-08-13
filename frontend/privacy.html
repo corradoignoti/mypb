@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy &mdash; MyPB</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1><a href="index.html" class="brand-link"><img src="icon.svg" alt="" width="22" height="22" class="brand-icon" />MyPB</a></h1>
+  </header>
+
+  <main class="policy">
+    <div class="detail">
+      <h2>Informativa sulla privacy</h2>
+      <p class="policy-updated">Ultimo aggiornamento: 13 agosto 2026</p>
+
+      <p>
+        MyPB &egrave; un'applicazione web che aiuta a trovare i distributori di carburante
+        pi&ugrave; vicini e a confrontarne i prezzi. Questa pagina spiega quali dati vengono
+        trattati durante l'uso dell'app e con chi vengono condivisi.
+      </p>
+
+      <h3>Nessuna registrazione</h3>
+      <p>
+        MyPB non richiede account, non raccoglie nomi, email o password e non utilizza
+        cookie di tracciamento o profilazione.
+      </p>
+
+      <h3>Posizione geografica</h3>
+      <p>
+        Se lo consenti, il browser condivide con la pagina la tua posizione (tramite la
+        Geolocation API) per precompilare i campi Lat/Lon e cercare i distributori nelle
+        vicinanze. La posizione viene inviata al server MyPB solo per calcolare le distanze
+        nella ricerca richiesta e non viene salvata. Puoi revocare il permesso in qualsiasi
+        momento dalle impostazioni del browser; in alternativa puoi inserire un indirizzo o
+        le coordinate manualmente.
+      </p>
+
+      <h3>Ricerca per indirizzo e mappe</h3>
+      <p>
+        Quando digiti un indirizzo, il testo viene inviato al servizio di geocodifica
+        <a href="https://nominatim.org/release-docs/latest/api/Search/" target="_blank" rel="noopener">Nominatim di OpenStreetMap</a>
+        per trovarne le coordinate. Le mappe sono fornite da
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>,
+        che come qualsiasi servizio di terze parti riceve l'indirizzo IP del dispositivo per
+        caricare indirizzi e tile della mappa. Questi servizi sono gestiti dalla
+        OpenStreetMap Foundation secondo la propria
+        <a href="https://osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener">informativa privacy</a>.
+      </p>
+
+      <h3>Font</h3>
+      <p>
+        Il carattere Roboto viene caricato da Google Fonts (fonts.googleapis.com e
+        fonts.gstatic.com), che riceve l'indirizzo IP del dispositivo per servire il file
+        del font, secondo la
+        <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">informativa privacy di Google</a>.
+      </p>
+
+      <h3>Memoria locale del dispositivo</h3>
+      <p>
+        MyPB salva nel <em>localStorage</em> del browser solo la preferenza di aver chiuso
+        l'avviso &laquo;Installa app&raquo;. Questo dato resta esclusivamente sul tuo
+        dispositivo e non viene mai inviato al server.
+      </p>
+
+      <h3>Dati sui distributori e sui prezzi</h3>
+      <p>
+        I dati su impianti e prezzi dei carburanti provengono dal dataset pubblico
+        <a href="https://www.mimit.gov.it/it/open-data/elenco-dataset/carburanti-prezzi-praticati-e-anagrafica-degli-impianti" target="_blank" rel="noopener">Carburanti &mdash; prezzi praticati e anagrafica degli impianti</a>
+        del Ministero delle Imprese e del Made in Italy (MIMIT) e non contengono dati
+        personali.
+      </p>
+
+      <h3>Conservazione dei dati</h3>
+      <p>
+        Il server MyPB elabora i parametri di ricerca (coordinate, raggio, filtri) solo per
+        rispondere alla richiesta in corso e non li conserva in un database n&eacute; li
+        condivide con soggetti terzi.
+      </p>
+
+      <h3>Contatti</h3>
+      <p>
+        Per domande su questa informativa puoi contattare l'autore del progetto tramite
+        <a href="https://github.com/corradoignoti" target="_blank" rel="noopener">GitHub</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      MyPB &middot; by <a href="https://github.com/corradoignoti" target="_blank" rel="noopener">Corrado Ignoti</a>
+      &middot; <a href="privacy.html">Privacy</a>
+    </p>
+  </footer>
+</body>
+</html>
