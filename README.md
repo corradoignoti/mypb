@@ -4,6 +4,8 @@ Flask API + web frontend to find nearby Italian fuel stations (impianti)
 and compare prices, over `mypb.db` (SQLite). Mobile-first, installable as
 a PWA, Material Design 3 styling, Italian UI.
 
+Latest project version with daily updated data is available on [https://mypb.fizban.net](https://mypb.fizban.net)
+
 ```
 mypb/
 ├── mypb-api/     Flask API (gestore, aroundme, Swagger docs)
