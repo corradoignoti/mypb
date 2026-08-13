@@ -13,6 +13,9 @@
   --primary-container: #dbe6ff;
   --on-primary-container: #0a3979;
   --error: #ba1a1a;
+  --warning: #7a5900;
+  --warning-container: #ffe8b3;
+  --on-warning-container: #402d00;
 
   /* Shape scale */
   --shape-xs: 4px;
@@ -42,6 +45,9 @@
     --primary-container: #294577;
     --on-primary-container: #d6e2ff;
     --error: #ffb4ab;
+    --warning: #ffcb66;
+    --warning-container: #4d3800;
+    --on-warning-container: #ffe8b3;
 
     --elevation-1: 0 1px 2px 0 rgba(0, 0, 0, 0.6), 0 1px 3px 1px rgba(0, 0, 0, 0.4);
     --elevation-2: 0 1px 2px 0 rgba(0, 0, 0, 0.6), 0 2px 6px 2px rgba(0, 0, 0, 0.4);
@@ -96,6 +102,49 @@ header h1 {
 
 .api-base input {
   width: 220px;
+}
+
+.install-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1.5rem;
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+  font-size: 0.85rem;
+}
+
+.install-banner img {
+  border-radius: var(--shape-xs);
+  flex-shrink: 0;
+}
+
+.install-banner p {
+  margin: 0;
+  flex: 1;
+}
+
+.install-banner button {
+  flex-shrink: 0;
+}
+
+#installBtn {
+  padding: 0.4rem 1rem;
+  font-size: 0.82rem;
+}
+
+.install-dismiss {
+  background: none;
+  color: var(--on-primary-container);
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0.2rem 0.4rem;
+  border-radius: var(--shape-full);
+}
+
+.install-dismiss:hover {
+  background: rgba(0, 0, 0, 0.08);
+  box-shadow: none;
 }
 
 nav.tabs {
@@ -256,6 +305,29 @@ button:active { box-shadow: none; }
 }
 
 .status.error { color: var(--error); }
+
+.status.warning {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  min-height: 0;
+  margin: 0.5rem 0;
+  padding: 0.9rem 1.1rem;
+  border-radius: var(--shape-md);
+  background: var(--warning-container);
+  color: var(--on-warning-container);
+  border: 1px solid var(--warning);
+  box-shadow: var(--elevation-1);
+  font-size: 0.92rem;
+  font-weight: 500;
+}
+
+.status.warning::before {
+  content: "⚠️";
+  font-size: 1.15rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
 
 .results-table {
   width: 100%;

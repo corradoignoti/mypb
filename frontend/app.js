@@ -30,9 +30,15 @@ sortSelect.addEventListener("change", () => {
   fuelField.classList.toggle("hidden", sortSelect.value !== "price");
 });
 
-document.getElementById("geoBtn").addEventListener("click", () => {
+document.getElementById("geoBtn").addEventListener("click", () => locateUser({ search: false }));
+
+function locateUser({ search }) {
   if (!navigator.geolocation) {
-    setStatus(aroundmeStatus, "Geolocalizzazione non supportata dal browser.", true);
+    setStatus(
+      aroundmeStatus,
+      "Il browser non supporta la geolocalizzazione. Inserisci indirizzo o coordinate manualmente per trovare i distributori vicino a te.",
+      "warning"
+    );
     return;
   }
   navigator.geolocation.getCurrentPosition(
@@ -47,10 +53,20 @@ document.getElementById("geoBtn").addEventListener("click", () => {
       } catch (_) {
         // reverse geocode is best-effort, ignore failures
       }
+      if (search) await runAroundmeSearch();
     },
-    (err) => setStatus(aroundmeStatus, `Posizione non disponibile: ${err.message}`, true)
+    () => {
+      setStatus(
+        aroundmeStatus,
+        "Non abbiamo potuto accedere alla tua posizione. Condividila per vedere subito i distributori di carburante più vicini a te, oppure inserisci indirizzo o coordinate manualmente.",
+        "warning"
+      );
+    }
   );
-});
+}
+
+// try to locate the user and run a default search as soon as the page loads
+locateUser({ search: true });
 
 // ---- address autocomplete + geocoding (OpenStreetMap Nominatim) ----
 const NOMINATIM_SEARCH_URL = "https://nominatim.openstreetmap.org/search";
@@ -129,9 +145,10 @@ async function reverseGeocode(lat, lon) {
   return data.display_name || null;
 }
 
-function setStatus(el, msg, isError = false) {
+function setStatus(el, msg, variant = false) {
   el.textContent = msg;
-  el.classList.toggle("error", isError);
+  el.classList.toggle("error", variant === true || variant === "error");
+  el.classList.toggle("warning", variant === "warning");
 }
 
 aroundmeForm.addEventListener("submit", async (e) => {
@@ -412,6 +429,63 @@ function showGestoreMap(data) {
     .openPopup();
   setTimeout(() => gestoreMapObj.invalidateSize(), 0);
 }
+
+// ---- install prompt (add to home screen) ----
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js").catch(() => {
+    // installability is best-effort; ignore registration failures
+  });
+}
+
+(function setupInstallBanner() {
+  const DISMISS_KEY = "installBannerDismissed";
+  const banner = document.getElementById("installBanner");
+  const installBtn = document.getElementById("installBtn");
+  const dismissBtn = document.getElementById("installDismissBtn");
+  const bannerText = document.getElementById("installBannerText");
+
+  const isStandalone =
+    window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+  if (isStandalone || localStorage.getItem(DISMISS_KEY)) return;
+
+  const isIos = /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+
+  function showBanner() {
+    banner.classList.remove("hidden");
+  }
+
+  function dismiss() {
+    banner.classList.add("hidden");
+    localStorage.setItem(DISMISS_KEY, "1");
+  }
+
+  dismissBtn.addEventListener("click", dismiss);
+
+  if (isIos) {
+    // Safari has no beforeinstallprompt event; show manual instructions.
+    bannerText.textContent = 'Installa MyPB: tocca Condividi, poi "Aggiungi a Home".';
+    installBtn.classList.add("hidden");
+    showBanner();
+    return;
+  }
+
+  let deferredPrompt = null;
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showBanner();
+  });
+
+  installBtn.addEventListener("click", async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+    dismiss();
+  });
+
+  window.addEventListener("appinstalled", dismiss);
+})();
 
 function escapeHtml(str) {
   return String(str ?? "").replace(/[&<>"']/g, (c) => ({

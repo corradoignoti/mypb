@@ -7,6 +7,12 @@
   <link rel="icon" href="icon.svg" type="image/svg+xml" />
   <link rel="icon" href="favicon.ico" sizes="any" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="MyPB" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -29,6 +35,13 @@
       <input id="apiBase" type="text" value="http://127.0.0.1:5000" />
     </div>
   </header>
+
+  <div id="installBanner" class="install-banner hidden">
+    <img src="icon-192.png" alt="" width="32" height="32" />
+    <p id="installBannerText">Installa MyPB sul telefono per un accesso più rapido.</p>
+    <button type="button" id="installBtn">Installa</button>
+    <button type="button" id="installDismissBtn" class="install-dismiss" aria-label="Chiudi">&times;</button>
+  </div>
 
   <nav class="tabs">
     <button class="tab-btn active" data-tab="aroundme">Qui attorno</button>
@@ -61,7 +74,7 @@
           <label for="sort">Ordina per</label>
           <select id="sort">
             <option value="alpha">Alfabetico</option>
-            <option value="price">Prezzo</option>
+            <option value="price" selected>Prezzo</option>
           </select>
         </div>
         <div class="field">
