@@ -201,9 +201,10 @@ function renderAroundme(data) {
   }
   setStatus(aroundmeStatus, `${data.count} impianti entro ${data.radiusKm} km.`);
 
-  for (const it of data.results) {
+  data.results.forEach((it, idx) => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
+      <td class="row-num">${idx + 1}</td>
       <td>${escapeHtml(it.nomeImpianto || "")}</td>
       <td>${escapeHtml(it.gestore || "")}</td>
       <td>${escapeHtml(it.bandiera || "")}</td>
@@ -213,7 +214,7 @@ function renderAroundme(data) {
       <td><button class="link-btn" data-id="${it.idImpianto}">Dettagli</button></td>
     `;
     aroundmeTbody.appendChild(tr);
-  }
+  });
 
   aroundmeTbody.querySelectorAll(".link-btn").forEach((btn) => {
     btn.addEventListener("click", () => {
@@ -336,19 +337,38 @@ function showAroundmeMap(data, centerLat, centerLon) {
   aroundmeMarkers.push(centerMarker);
   bounds.push([centerLat, centerLon]);
 
-  for (const it of data.results) {
+  data.results.forEach((it, idx) => {
     const lat = parseFloat(it.latitudine);
     const lon = parseFloat(it.longitudine);
-    if (Number.isNaN(lat) || Number.isNaN(lon)) continue;
+    if (Number.isNaN(lat) || Number.isNaN(lon)) return;
 
     const priceLine = data.sort === "price" && it.prezzo != null
       ? `<div class="popup-price">€ ${escapeHtml(it.prezzo)}</div>`
       : "";
 
-    const marker = L.marker([lat, lon])
+    const numberIcon = L.divIcon({
+      className: "marker-pin",
+      html: `
+        <svg width="26" height="34" viewBox="0 0 26 34">
+          <path
+            d="M13 33 C13 33 25 19.5 25 13 C25 5.8 19.8 0.75 13 0.75 C6.2 0.75 1 5.8 1 13 C1 19.5 13 33 13 33 Z"
+            style="fill:#2563eb; stroke:#fff; stroke-width:1.5;"
+          />
+          <text
+            x="13" y="17.5"
+            style="fill:#fff; font-weight:700; font-size:12px; font-family:sans-serif; text-anchor:middle; dominant-baseline:middle;"
+          >${idx + 1}</text>
+        </svg>
+      `,
+      iconSize: [26, 34],
+      iconAnchor: [13, 33],
+      popupAnchor: [0, -33],
+    });
+
+    const marker = L.marker([lat, lon], { icon: numberIcon })
       .addTo(aroundmeMapObj)
       .bindPopup(`
-        <strong>${escapeHtml(it.nomeImpianto || "")}</strong><br>
+        <strong>#${idx + 1} &mdash; ${escapeHtml(it.nomeImpianto || "")}</strong><br>
         ${escapeHtml(it.gestore || "")}<br>
         ${escapeHtml(it.comune || "")} &mdash; ${it.distanceKm} km
         ${priceLine}
@@ -356,7 +376,7 @@ function showAroundmeMap(data, centerLat, centerLon) {
       `);
     aroundmeMarkers.push(marker);
     bounds.push([lat, lon]);
-  }
+  });
 
   if (bounds.length) {
     aroundmeMapObj.fitBounds(bounds, { padding: [30, 30] });

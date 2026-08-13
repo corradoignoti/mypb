@@ -271,3 +271,33 @@ button:hover { background: var(--accent-hover); }
 }
 
 .popup-price { font-weight: 600; }
+
+.results-table td.row-num {
+  color: var(--muted);
+  font-weight: 600;
+  text-align: center;
+  width: 1%;
+}
+
+.marker-pin {
+  background: transparent;
+  border: none;
+}
+
+.marker-pin svg {
+  display: block;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
+}
+
+.marker-pin path {
+  fill: var(--accent);
+  stroke: #fff;
+  stroke-width: 1.5;
+}
+
+.marker-pin text {
+  fill: #fff;
+  font-weight: 700;
+  font-size: 12px;
+  text-anchor: middle;
+}
