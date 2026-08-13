@@ -338,11 +338,19 @@ button:active { box-shadow: none; }
 
 /* Outlined button (Material 3) */
 #geoBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   background: none;
   color: var(--accent);
   border: 1px solid var(--border);
   font-weight: 500;
   align-self: end;
+}
+
+.target-icon {
+  flex-shrink: 0;
 }
 
 #geoBtn:hover {

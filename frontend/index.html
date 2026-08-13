@@ -64,7 +64,17 @@
           <label for="lon">Lon</label>
           <input id="lon" type="text" placeholder="13.595533" required />
         </div>
-        <button type="button" id="geoBtn" title="Usa la mia posizione">📍 Usa posizione</button>
+        <button type="button" id="geoBtn" title="Usa la mia posizione">
+          <svg class="target-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="2" />
+            <circle cx="12" cy="12" r="1.6" fill="currentColor" />
+            <line x1="12" y1="1" x2="12" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <line x1="12" y1="20" x2="12" y2="23" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <line x1="1" y1="12" x2="4" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+            <line x1="20" y1="12" x2="23" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+          Usa posizione
+        </button>
 
         <div class="field advanced hidden">
           <label for="radius">Raggio (km)</label>
