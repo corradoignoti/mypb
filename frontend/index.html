@@ -56,28 +56,28 @@
           <input id="address" type="text" placeholder="Via Roma 1, Palermo" autocomplete="off" />
           <ul id="addressSuggestions" class="address-suggestions hidden"></ul>
         </div>
-        <div class="field">
+        <div class="field advanced hidden">
           <label for="lat">Lat</label>
           <input id="lat" type="text" placeholder="37.333935" required />
         </div>
-        <div class="field">
+        <div class="field advanced hidden">
           <label for="lon">Lon</label>
           <input id="lon" type="text" placeholder="13.595533" required />
         </div>
         <button type="button" id="geoBtn" title="Usa la mia posizione">📍 Usa posizione</button>
 
-        <div class="field">
+        <div class="field advanced hidden">
           <label for="radius">Raggio (km)</label>
           <input id="radius" type="number" value="5" min="0.1" step="0.1" />
         </div>
-        <div class="field">
+        <div class="field advanced hidden">
           <label for="sort">Ordina per</label>
           <select id="sort">
             <option value="alpha">Alfabetico</option>
             <option value="price" selected>Prezzo</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field advanced hidden">
           <label for="order">Ordine</label>
           <select id="order">
             <option value="asc">Crescente</option>
@@ -93,7 +93,7 @@
             <option value="Metano">Metano</option>
           </select>
         </div>
-        <div class="field">
+        <div class="field advanced hidden">
           <label for="self">Tipo</label>
           <select id="self">
             <option value="">Tutti</option>
@@ -104,6 +104,8 @@
 
         <button type="submit">Cerca</button>
       </form>
+
+      <button type="button" id="advancedToggle" class="advanced-toggle">Ricerca avanzata</button>
 
       <p id="aroundmeStatus" class="status"></p>
 

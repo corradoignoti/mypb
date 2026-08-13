@@ -30,6 +30,16 @@ sortSelect.addEventListener("change", () => {
   fuelField.classList.toggle("hidden", sortSelect.value !== "price");
 });
 
+// ---- short/advanced search form ----
+const advancedToggle = document.getElementById("advancedToggle");
+const advancedFields = aroundmeForm.querySelectorAll(".advanced");
+
+advancedToggle.addEventListener("click", () => {
+  const expand = advancedFields[0].classList.contains("hidden");
+  advancedFields.forEach((el) => el.classList.toggle("hidden", !expand));
+  advancedToggle.textContent = expand ? "Ricerca semplice" : "Ricerca avanzata";
+});
+
 document.getElementById("geoBtn").addEventListener("click", () => locateUser({ search: false }));
 
 function locateUser({ search }) {

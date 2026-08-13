@@ -350,6 +350,24 @@ button:active { box-shadow: none; }
   box-shadow: none;
 }
 
+.advanced-toggle {
+  display: block;
+  width: auto;
+  margin: 0.75rem auto 0;
+  padding: 0.3rem 0.6rem;
+  background: none;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-decoration: underline;
+}
+
+.advanced-toggle:hover {
+  background: none;
+  box-shadow: none;
+  color: var(--accent-hover);
+}
+
 .status {
   min-height: 1.2rem;
   font-size: 0.85rem;
