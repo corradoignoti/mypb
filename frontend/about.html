@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Informazioni &mdash; MyPB</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="icon" href="favicon.ico" sizes="any" />
+  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <meta name="theme-color" content="#2563eb" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1><a href="index.html" class="brand-link"><img src="icon.svg" alt="" width="22" height="22" class="brand-icon" />MyPB</a></h1>
+  </header>
+
+  <main class="policy">
+    <div class="detail">
+      <h2>Informazioni su MyPB</h2>
+
+      <p>
+        MyPB &egrave; una webapp che aiuta a trovare i distributori di carburante
+        pi&ugrave; vicini a una posizione o a un indirizzo, confrontarne i prezzi e
+        consultare i dettagli di un singolo impianto.
+      </p>
+
+      <h3>Come funziona</h3>
+      <p>
+        La ricerca &laquo;Qui attorno&raquo; calcola la distanza dalla posizione
+        indicata (via geolocalizzazione del browser o indirizzo inserito a mano)
+        verso gli impianti registrati entro il raggio scelto, con la possibilit&agrave;
+        di ordinare per prezzo o in ordine alfabetico. La scheda &laquo;Cerca
+        gestore&raquo; mostra anagrafica e prezzi di un impianto a partire dal suo
+        idImpianto.
+      </p>
+
+      <h3>Dati</h3>
+      <p>
+        Anagrafica impianti e prezzi provengono dal dataset pubblico
+        <a href="https://www.mimit.gov.it/it/open-data/elenco-dataset/carburanti-prezzi-praticati-e-anagrafica-degli-impianti" target="_blank" rel="noopener">Carburanti &mdash; prezzi praticati e anagrafica degli impianti</a>
+        del Ministero delle Imprese e del Made in Italy (MIMIT). Le mappe usano
+        <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>.
+      </p>
+
+      <h3>Tecnologia</h3>
+      <p>
+        Frontend statico (HTML/CSS/JavaScript) e API in Flask su un database
+        SQLite. Il codice &egrave; open source su
+        <a href="https://github.com/corradoignoti/mypb" target="_blank" rel="noopener">GitHub</a>.
+      </p>
+
+      <h3>Autore</h3>
+      <p>
+        MyPB &egrave; sviluppato da
+        <a href="https://github.com/corradoignoti" target="_blank" rel="noopener">Corrado Ignoti</a>.
+        Per segnalazioni o domande, apri una issue sul repository.
+      </p>
+
+      <p>
+        Vedi anche l'<a href="privacy.html">informativa sulla privacy</a>.
+      </p>
+    </div>
+  </main>
+
+  <footer>
+    <p>
+      MyPB &middot; by <a href="https://github.com/corradoignoti" target="_blank" rel="noopener">Corrado Ignoti</a>
+      &middot; <a href="about.html">About</a>
+      &middot; <a href="privacy.html">Privacy</a>
+    </p>
+  </footer>
+</body>
+</html>
