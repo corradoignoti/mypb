@@ -29,6 +29,11 @@
   <main>
     <section id="tab-aroundme" class="tab-panel active">
       <form id="aroundmeForm" class="form-row">
+        <div class="field address-field">
+          <label for="address">Indirizzo</label>
+          <input id="address" type="text" placeholder="Via Roma 1, Palermo" autocomplete="off" />
+          <ul id="addressSuggestions" class="address-suggestions hidden"></ul>
+        </div>
         <div class="field">
           <label for="lat">Lat</label>
           <input id="lat" type="text" placeholder="37.333935" required />

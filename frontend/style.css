@@ -125,6 +125,39 @@ button {
 
 button:hover { background: var(--accent-hover); }
 
+.address-field {
+  position: relative;
+  min-width: 220px;
+}
+
+.address-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+.address-suggestions li {
+  padding: 0.45rem 0.6rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text);
+}
+
+.address-suggestions li:hover {
+  background: var(--bg);
+}
+
 #geoBtn {
   background: var(--panel);
   color: var(--text);

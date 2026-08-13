@@ -36,13 +36,98 @@ document.getElementById("geoBtn").addEventListener("click", () => {
     return;
   }
   navigator.geolocation.getCurrentPosition(
-    (pos) => {
-      document.getElementById("lat").value = pos.coords.latitude.toFixed(6);
-      document.getElementById("lon").value = pos.coords.longitude.toFixed(6);
+    async (pos) => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+      document.getElementById("lat").value = lat.toFixed(6);
+      document.getElementById("lon").value = lon.toFixed(6);
+      try {
+        const address = await reverseGeocode(lat, lon);
+        if (address) addressInput.value = address;
+      } catch (_) {
+        // reverse geocode is best-effort, ignore failures
+      }
     },
     (err) => setStatus(aroundmeStatus, `Posizione non disponibile: ${err.message}`, true)
   );
 });
+
+// ---- address autocomplete + geocoding (OpenStreetMap Nominatim) ----
+const NOMINATIM_SEARCH_URL = "https://nominatim.openstreetmap.org/search";
+const NOMINATIM_REVERSE_URL = "https://nominatim.openstreetmap.org/reverse";
+
+const addressInput = document.getElementById("address");
+const addressSuggestions = document.getElementById("addressSuggestions");
+let addressDebounceTimer = null;
+let addressAbortController = null;
+
+addressInput.addEventListener("input", () => {
+  const q = addressInput.value.trim();
+  clearTimeout(addressDebounceTimer);
+  if (q.length < 3) {
+    hideAddressSuggestions();
+    return;
+  }
+  addressDebounceTimer = setTimeout(() => searchAddress(q), 400);
+});
+
+document.addEventListener("click", (e) => {
+  if (!addressInput.contains(e.target) && !addressSuggestions.contains(e.target)) {
+    hideAddressSuggestions();
+  }
+});
+
+async function searchAddress(q) {
+  if (addressAbortController) addressAbortController.abort();
+  addressAbortController = new AbortController();
+
+  const params = new URLSearchParams({ format: "json", q, addressdetails: "1", limit: "5" });
+
+  try {
+    const res = await fetch(`${NOMINATIM_SEARCH_URL}?${params}`, {
+      signal: addressAbortController.signal,
+      headers: { Accept: "application/json" },
+    });
+    const data = await res.json();
+    renderAddressSuggestions(data);
+  } catch (err) {
+    if (err.name !== "AbortError") hideAddressSuggestions();
+  }
+}
+
+function renderAddressSuggestions(results) {
+  addressSuggestions.innerHTML = "";
+  if (!results || results.length === 0) {
+    hideAddressSuggestions();
+    return;
+  }
+  for (const r of results) {
+    const li = document.createElement("li");
+    li.textContent = r.display_name;
+    li.addEventListener("click", () => {
+      document.getElementById("lat").value = parseFloat(r.lat).toFixed(6);
+      document.getElementById("lon").value = parseFloat(r.lon).toFixed(6);
+      addressInput.value = r.display_name;
+      hideAddressSuggestions();
+    });
+    addressSuggestions.appendChild(li);
+  }
+  addressSuggestions.classList.remove("hidden");
+}
+
+function hideAddressSuggestions() {
+  addressSuggestions.classList.add("hidden");
+  addressSuggestions.innerHTML = "";
+}
+
+async function reverseGeocode(lat, lon) {
+  const params = new URLSearchParams({ format: "json", lat, lon });
+  const res = await fetch(`${NOMINATIM_REVERSE_URL}?${params}`, {
+    headers: { Accept: "application/json" },
+  });
+  const data = await res.json();
+  return data.display_name || null;
+}
 
 function setStatus(el, msg, isError = false) {
   el.textContent = msg;
@@ -51,6 +136,18 @@ function setStatus(el, msg, isError = false) {
 
 aroundmeForm.addEventListener("submit", async (e) => {
   e.preventDefault();
+  await runAroundmeSearch();
+});
+
+["radius", "sort", "order", "fuel", "self"].forEach((id) => {
+  document.getElementById(id).addEventListener("change", () => {
+    const lat = document.getElementById("lat").value.trim();
+    const lon = document.getElementById("lon").value.trim();
+    if (lat && lon) runAroundmeSearch();
+  });
+});
+
+async function runAroundmeSearch() {
   const lat = document.getElementById("lat").value.trim();
   const lon = document.getElementById("lon").value.trim();
   const radius = document.getElementById("radius").value;
@@ -83,7 +180,7 @@ aroundmeForm.addEventListener("submit", async (e) => {
   } catch (err) {
     setStatus(aroundmeStatus, `Impossibile contattare l'API: ${err.message}`, true);
   }
-});
+}
 
 let lastAroundmeData = null;
 let lastAroundmeCenter = null;
