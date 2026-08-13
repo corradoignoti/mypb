@@ -220,23 +220,23 @@ function renderAroundme(data) {
 
   data.results.forEach((it, idx) => {
     const tr = document.createElement("tr");
+    tr.className = "row-clickable";
+    tr.dataset.id = it.idImpianto;
+    tr.title = it.nomeImpianto || "";
     tr.innerHTML = `
       <td class="row-num">${idx + 1}</td>
-      <td>${escapeHtml(it.nomeImpianto || "")}</td>
-      <td>${escapeHtml(it.gestore || "")}</td>
       <td>${escapeHtml(it.bandiera || "")}</td>
       <td>${escapeHtml(it.comune || "")}</td>
       <td>${it.distanceKm}</td>
       <td class="${data.sort === "price" ? "" : "hidden"}">${it.prezzo ?? "-"}</td>
-      <td><button class="link-btn" data-id="${it.idImpianto}">Dettagli</button></td>
     `;
     aroundmeTbody.appendChild(tr);
   });
 
-  aroundmeTbody.querySelectorAll(".link-btn").forEach((btn) => {
-    btn.addEventListener("click", () => {
+  aroundmeTbody.querySelectorAll(".row-clickable").forEach((tr) => {
+    tr.addEventListener("click", () => {
       document.querySelector('[data-tab="gestore"]').click();
-      document.getElementById("idImpianto").value = btn.dataset.id;
+      document.getElementById("idImpianto").value = tr.dataset.id;
       gestoreForm.requestSubmit();
     });
   });
