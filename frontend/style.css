@@ -383,7 +383,6 @@ button:active { box-shadow: none; }
 
 .results-table {
   width: 100%;
-  min-width: 560px; /* keeps columns legible; wrap-x scrolls it on narrow screens */
   border-collapse: collapse;
   background: var(--panel);
   border-radius: var(--shape-md);
@@ -412,7 +411,14 @@ button:active { box-shadow: none; }
   text-transform: uppercase;
 }
 
-.results-table tbody tr:hover { background: var(--surface-variant); }
+.results-table tbody tr.row-clickable {
+  cursor: pointer;
+}
+
+.results-table tbody tr.row-clickable:hover,
+.results-table tbody tr.row-clickable:active {
+  background: var(--surface-variant);
+}
 
 .results-table button.link-btn {
   background: none;
