@@ -599,6 +599,17 @@ footer a:hover {
   text-decoration: none;
 }
 
+.github-link {
+  display: flex;
+  align-items: center;
+  color: var(--muted);
+  transition: color 0.15s ease;
+}
+
+.github-link:hover {
+  color: var(--text);
+}
+
 .policy {
   max-width: 720px;
 }
