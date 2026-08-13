@@ -1,4 +1,4 @@
-FROM nginx:1.27-alpine
+FROM nginx:1.31.3
 
 ENV API_BASE_URL=http://localhost:5000
 
