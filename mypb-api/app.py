@@ -303,6 +303,10 @@ def aroundme():
 
         priced = [it for it in results if it["prezzo"] is not None]
         unpriced = [it for it in results if it["prezzo"] is None]
+        # sort() is stable, so sorting by distance first and price second
+        # gives: price as the primary key, distance as tie-breaker (nearest
+        # first) for impianti sharing the same price.
+        priced.sort(key=lambda it: it["distanceKm"])
         priced.sort(key=lambda it: it["prezzo"], reverse=(order == "desc"))
         results = priced + unpriced  # no-price impianti always last
     else:

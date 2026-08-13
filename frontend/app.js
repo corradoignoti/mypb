@@ -216,7 +216,7 @@ function renderAroundme(data) {
     setStatus(aroundmeStatus, "Nessun impianto trovato nel raggio indicato.");
     return;
   }
-  setStatus(aroundmeStatus, `${data.count} impianti entro ${data.radiusKm} km.`);
+  setStatus(aroundmeStatus, `${data.count} impianti entro ${formatNumber(data.radiusKm)} km.`);
 
   data.results.forEach((it, idx) => {
     const tr = document.createElement("tr");
@@ -227,8 +227,8 @@ function renderAroundme(data) {
       <td class="row-num">${idx + 1}</td>
       <td>${escapeHtml(it.bandiera || "")}</td>
       <td>${escapeHtml(it.comune || "")}</td>
-      <td>${it.distanceKm}</td>
-      <td class="${data.sort === "price" ? "" : "hidden"}">${it.prezzo ?? "-"}</td>
+      <td>${formatNumber(it.distanceKm)}</td>
+      <td class="${data.sort === "price" ? "" : "hidden"}">${formatNumber(it.prezzo)}</td>
     `;
     aroundmeTbody.appendChild(tr);
   });
@@ -275,7 +275,7 @@ function renderGestore(data) {
       (p) => `
       <tr>
         <td>${escapeHtml(p.carburante)}</td>
-        <td>${escapeHtml(p.prezzo)}</td>
+        <td>${formatNumber(p.prezzo)}</td>
         <td>${p.isSelf === "1" ? "Self" : "Servito"}</td>
         <td>${escapeHtml(p.dataComunicazione)}</td>
       </tr>`
@@ -360,7 +360,7 @@ function showAroundmeMap(data, centerLat, centerLon) {
     if (Number.isNaN(lat) || Number.isNaN(lon)) return;
 
     const priceLine = data.sort === "price" && it.prezzo != null
-      ? `<div class="popup-price">€ ${escapeHtml(it.prezzo)}</div>`
+      ? `<div class="popup-price">€ ${formatNumber(it.prezzo)}</div>`
       : "";
 
     const numberIcon = L.divIcon({
@@ -387,7 +387,7 @@ function showAroundmeMap(data, centerLat, centerLon) {
       .bindPopup(`
         <strong>#${idx + 1} &mdash; ${escapeHtml(it.nomeImpianto || "")}</strong><br>
         ${escapeHtml(it.gestore || "")}<br>
-        ${escapeHtml(it.comune || "")} &mdash; ${it.distanceKm} km
+        ${escapeHtml(it.comune || "")} &mdash; ${formatNumber(it.distanceKm)} km
         ${priceLine}
         <br><button class="popup-link-btn" data-id="${escapeHtml(it.idImpianto)}">Dettagli e prezzi</button>
       `);
@@ -491,4 +491,12 @@ function escapeHtml(str) {
   return String(str ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   }[c]));
+}
+
+// formats prices/distances with the Italian decimal comma (e.g. 1.959 -> "1,959")
+function formatNumber(n) {
+  if (n === null || n === undefined || n === "") return "-";
+  const num = typeof n === "number" ? n : parseFloat(n);
+  if (Number.isNaN(num)) return escapeHtml(n);
+  return num.toLocaleString("it-IT", { maximumFractionDigits: 3 });
 }
