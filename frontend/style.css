@@ -544,6 +544,19 @@ button:active { box-shadow: none; }
 
 .popup-price { font-weight: 600; }
 
+.popup-nav {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.popup-nav span { color: var(--muted); }
+
+.popup-nav a {
+  color: var(--accent);
+  font-weight: 500;
+}
+
 .results-table td.row-num {
   color: var(--muted);
   font-weight: 500;

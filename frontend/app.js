@@ -344,6 +344,20 @@ document.querySelectorAll(".view-btn").forEach((btn) => {
   });
 });
 
+// links that open turn-by-turn driving directions to lat/lon in Google Maps / Apple Maps
+function navigationLinks(lat, lon) {
+  const dest = `${lat},${lon}`;
+  const google = `https://www.google.com/maps/dir/?api=1&destination=${dest}&travelmode=driving`;
+  const apple = `https://maps.apple.com/?daddr=${dest}&dirflg=d`;
+  return `
+    <div class="popup-nav">
+      <span>Portami qui:</span>
+      <a href="${google}" target="_blank" rel="noopener">Google Maps</a>
+      <a href="${apple}" target="_blank" rel="noopener">Apple Maps</a>
+    </div>
+  `;
+}
+
 function showAroundmeMap(data, centerLat, centerLon) {
   if (!aroundmeMapObj) {
     aroundmeMapObj = initMap("aroundmeMap");
@@ -400,6 +414,7 @@ function showAroundmeMap(data, centerLat, centerLon) {
         ${escapeHtml(it.comune || "")} &mdash; ${formatNumber(it.distanceKm)} km
         ${priceLine}
         <br><button class="popup-link-btn" data-id="${escapeHtml(it.idImpianto)}">Dettagli e prezzi</button>
+        ${navigationLinks(lat, lon)}
       `);
     aroundmeMarkers.push(marker);
     bounds.push([lat, lon]);
@@ -435,7 +450,7 @@ function showGestoreMap(data) {
   gestoreMapObj.setView([lat, lon], 15);
   L.marker([lat, lon])
     .addTo(gestoreMapObj)
-    .bindPopup(escapeHtml(data.nomeImpianto || ""))
+    .bindPopup(`<strong>${escapeHtml(data.nomeImpianto || "")}</strong>${navigationLinks(lat, lon)}`)
     .openPopup();
   setTimeout(() => gestoreMapObj.invalidateSize(), 0);
 }
