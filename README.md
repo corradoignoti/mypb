@@ -187,6 +187,21 @@ No TLS or reverse proxy is set up; both services are exposed as plain
 HTTP. Put a reverse proxy (Caddy, nginx + certbot, ...) in front for a
 public-facing deployment.
 
+### Prebuilt images
+
+`.github/workflows/docker-publish.yml` builds both images (linux/amd64 and
+linux/arm64) on every push to `master` and pushes them to GitHub Container
+Registry, tagged `latest` and `sha-<short commit>`:
+
+- `ghcr.io/corradoignoti/mypb-api`
+- `ghcr.io/corradoignoti/mypb-frontend`
+
+To use them instead of building locally, replace `build:` with `image:` in
+`docker-compose.yml` (e.g. `image: ghcr.io/corradoignoti/mypb-api:latest`)
+and run `docker compose pull && docker compose up -d`. New packages on
+GHCR are private by default — make them public in the package settings,
+or `docker login ghcr.io` on the server first.
+
 ## License
 
 MIT — see `license.txt`.
