@@ -512,6 +512,47 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("appinstalled", dismiss);
 })();
 
+// ---- prices update status (footer) ----
+(async function loadPricesStatus() {
+  const el = document.getElementById("pricesStatus");
+  try {
+    const res = await fetch(`${apiBase()}/status`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+
+    const parts = [];
+    const estrazione = parseItalianOrIsoDate(data.dataEstrazione);
+    if (data.dataEstrazione) {
+      parts.push(`Prezzi aggiornati al ${estrazione ? estrazione.toLocaleDateString("it-IT") : data.dataEstrazione}`);
+    }
+    if (data.ultimaComunicazione) {
+      parts.push(`ultima comunicazione ${data.ultimaComunicazione}`);
+    }
+    if (!parts.length) return;
+
+    // MIMIT publishes prices daily: flag data older than 2 days as stale
+    const reference = estrazione || parseItalianOrIsoDate(data.ultimaComunicazione);
+    const stale = reference && Date.now() - reference.getTime() > 2 * 24 * 3600 * 1000;
+    el.textContent = parts.join(" · ") + (stale ? " (dati non aggiornati)" : "");
+    el.classList.toggle("error", Boolean(stale));
+    el.classList.remove("hidden");
+  } catch (err) {
+    el.textContent = "Stato aggiornamento prezzi non disponibile";
+    el.classList.add("error");
+    el.classList.remove("hidden");
+  }
+})();
+
+// accepts "yyyy-mm-dd..." or "dd/mm/yyyy...", returns a Date (local midnight) or null
+function parseItalianOrIsoDate(str) {
+  if (!str) return null;
+  let m = /^(\d{4})-(\d{2})-(\d{2})/.exec(str);
+  if (m) return new Date(+m[1], m[2] - 1, +m[3]);
+  m = /^(\d{2})\/(\d{2})\/(\d{4})/.exec(str);
+  if (m) return new Date(+m[3], m[2] - 1, +m[1]);
+  return null;
+}
+
 function escapeHtml(str) {
   return String(str ?? "").replace(/[&<>"']/g, (c) => ({
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",

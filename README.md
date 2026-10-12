@@ -74,6 +74,23 @@ Stations within a radius of a point.
 curl "http://localhost:5000/aroundme?lat=37.333935&lon=13.595533&radius=5&sort=price&fuel=Benzina"
 ```
 
+### `GET /status`
+
+Prices update status, shown in the frontend footer.
+
+- `dataEstrazione` — MIMIT extraction date of `prezzo_alle_8`, taken from
+  the CSV banner line (`Estrazione del ...`)
+- `dataImportazione` — ISO 8601 UTC timestamp of the import into `mypb.db`
+- `ultimaComunicazione` — most recent `dtComu` among the prices
+
+The first two come from the `import_info` table written by
+`import_source_files.sh`; they are `null` for a db imported before that
+table existed (re-run the importer).
+
+```bash
+curl "http://localhost:5000/status"
+```
+
 Interactive Swagger docs: `http://localhost:5000/apidocs/`
 
 ### Run locally

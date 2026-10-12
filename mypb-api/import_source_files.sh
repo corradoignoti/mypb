@@ -12,6 +12,9 @@
 #   line 2: pipe-separated column header
 #   line 3+: pipe-separated data rows (all columns stored as TEXT)
 #
+# The banner line and the import timestamp are recorded per table in
+# the import_info table (used by the API's /status endpoint).
+#
 # Parsing is done with python3's csv module (delimiter="|", no quoting)
 # instead of sqlite3's `.import`, because the source data contains
 # stray literal `"` characters that trip up sqlite3's CSV-quote parser.
@@ -90,11 +93,12 @@ for csv_file in "${csv_files[@]}"; do
 import csv
 import sqlite3
 import sys
+from datetime import datetime, timezone
 
 db_file, csv_file, table = sys.argv[1], sys.argv[2], sys.argv[3]
 
 with open(csv_file, newline="", encoding="utf-8") as f:
-    f.readline()  # skip banner line ("Estrazione del ...")
+    banner = f.readline().strip()  # banner line ("Estrazione del ..."), not data
     reader = csv.reader(f, delimiter="|", quoting=csv.QUOTE_NONE)
     header = next(reader)
     columns = [c.strip() for c in header]
@@ -120,6 +124,14 @@ with open(csv_file, newline="", encoding="utf-8") as f:
         rows.append(row)
 
     cur.executemany(insert_sql, rows)
+    cur.execute(
+        'CREATE TABLE IF NOT EXISTS import_info '
+        '(tableName TEXT PRIMARY KEY, banner TEXT, importedAt TEXT)'
+    )
+    cur.execute(
+        'INSERT OR REPLACE INTO import_info VALUES (?, ?, ?)',
+        (table, banner, datetime.now(timezone.utc).isoformat(timespec="seconds")),
+    )
     conn.commit()
     count = cur.execute(f'SELECT COUNT(*) FROM "{table}"').fetchone()[0]
     conn.close()

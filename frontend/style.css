@@ -595,6 +595,14 @@ footer {
   border-top: 1px solid var(--border-variant);
 }
 
+.prices-status {
+  margin-top: 0.35rem;
+}
+
+.prices-status.error {
+  color: var(--error);
+}
+
 footer a {
   color: var(--muted);
   text-decoration: underline;

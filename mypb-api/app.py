@@ -6,8 +6,13 @@ Tables:
                               "Nome Impianto", Indirizzo, Comune, Provincia,
                               Latitudine, Longitudine)
   prezzo_alle_8(idImpianto, descCarburante, prezzo, isSelf, dtComu)
+  import_info(tableName, banner, importedAt)   -- written by the importer
 
 Endpoints:
+  GET /status
+      -> prices update status: MIMIT extraction date of prezzo_alle_8,
+         when it was imported, and the latest dtComu among the prices.
+
   GET /gestore/<id_impianto>
       -> anagrafica row + all fuel prices for that impianto.
 
@@ -21,6 +26,7 @@ Endpoints:
       order flips either sort (asc default, or desc).
 """
 import math
+import re
 import sqlite3
 
 from flasgger import Swagger
@@ -78,6 +84,57 @@ def row_to_impianto(row):
         "latitudine": row["Latitudine"],
         "longitudine": row["Longitudine"],
     }
+
+
+@app.get("/status")
+def status():
+    """
+    Stato di aggiornamento dei prezzi.
+    ---
+    tags:
+      - status
+    responses:
+      200:
+        description: Date di aggiornamento dei prezzi (null se non disponibili)
+        schema:
+          type: object
+          properties:
+            dataEstrazione:
+              type: string
+              description: data di estrazione MIMIT di prezzo_alle_8 (dal banner del CSV)
+            dataImportazione:
+              type: string
+              description: timestamp ISO 8601 (UTC) dell'import in mypb.db
+            ultimaComunicazione:
+              type: string
+              description: dtComu più recente tra i prezzi (gg/mm/aaaa hh:mm:ss)
+    """
+    db = get_db()
+
+    data_estrazione = data_importazione = None
+    try:
+        info = db.execute(
+            "SELECT banner, importedAt FROM import_info WHERE tableName = 'prezzo_alle_8'"
+        ).fetchone()
+    except sqlite3.OperationalError:
+        info = None  # db imported before import_info existed
+    if info is not None:
+        m = re.search(r"Estrazione del\s+(.+)", info["banner"] or "", re.IGNORECASE)
+        data_estrazione = m.group(1).strip() if m else (info["banner"] or None)
+        data_importazione = info["importedAt"]
+
+    # dtComu is "dd/mm/yyyy hh:mm:ss" TEXT; reorder to yyyymmdd... to take MAX
+    row = db.execute(
+        "SELECT dtComu FROM prezzo_alle_8 "
+        "ORDER BY substr(dtComu, 7, 4) || substr(dtComu, 4, 2) || substr(dtComu, 1, 2) "
+        "|| substr(dtComu, 12) DESC LIMIT 1"
+    ).fetchone()
+
+    return jsonify({
+        "dataEstrazione": data_estrazione,
+        "dataImportazione": data_importazione,
+        "ultimaComunicazione": row["dtComu"] if row else None,
+    })
 
 
 @app.get("/gestore/<id_impianto>")
