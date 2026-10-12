@@ -175,7 +175,9 @@ Open `http://203.0.113.10:9080` for the frontend.
   the image — it must exist before `docker compose up` (step 1).
 - `frontend` — nginx-served static site, host port `9080` (container
   `80`). `API_BASE_URL` is templated into `config.js` at container
-  startup, so the same image can target any API host.
+  startup, so the same image can target any API host. `nginx.conf`
+  sends `Cache-Control: no-cache` for HTML/JS/CSS so browsers and CDNs
+  (e.g. Cloudflare) revalidate them and pick up a new deploy immediately.
 
 **`API_BASE_URL` must be reachable from the browser**, not just from the
 Docker host — a container-internal name like `http://api:5000` will not
