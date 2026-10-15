@@ -530,11 +530,7 @@ if ("serviceWorker" in navigator) {
     }
     if (!parts.length) return;
 
-    // MIMIT publishes prices daily: flag data older than 2 days as stale
-    const reference = estrazione || parseItalianOrIsoDate(data.ultimaComunicazione);
-    const stale = reference && Date.now() - reference.getTime() > 2 * 24 * 3600 * 1000;
-    el.textContent = parts.join(" · ") + (stale ? " (dati non aggiornati)" : "");
-    el.classList.toggle("error", Boolean(stale));
+    el.textContent = parts.join(" · ");
     el.classList.remove("hidden");
   } catch (err) {
     el.textContent = "Stato aggiornamento prezzi non disponibile";
