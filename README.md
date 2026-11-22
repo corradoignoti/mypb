@@ -127,7 +127,10 @@ buttons). Two tabs:
   display with Italian decimal notation (`1,959`).
 - **Cerca gestore** — look up a single station by `idImpianto`.
 
-`about.html` and `privacy.html` are linked from the footer. The app is
+`about.html` and `privacy.html` are linked from the footer.
+`privacy-ios.html` is the privacy policy of the iOS app (its App Store
+privacy policy URL); keep it in sync with the app's in-app Privacy screen.
+The app is
 installable (manifest + service worker); a dismissible banner prompts
 "Aggiungi a Home" on supported browsers, with manual instructions on iOS
 Safari.
