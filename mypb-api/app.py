@@ -8,7 +8,9 @@ Tables:
   prezzo_alle_8(idImpianto, descCarburante, prezzo, isSelf, dtComu)
   import_info(tableName, banner, importedAt)   -- written by the importer
 
-Endpoints:
+Endpoints (each one is served both unprefixed, used by the web frontend,
+and under /v1/, used by the mobile apps; /v1/ must stay backward
+compatible once an app version has shipped):
   GET /status
       -> prices update status: MIMIT extraction date of prezzo_alle_8,
          when it was imported, and the latest dtComu among the prices.
@@ -17,13 +19,15 @@ Endpoints:
       -> anagrafica row + all fuel prices for that impianto.
 
   GET /aroundme?lat=<f>&lon=<f>&radius=<km>&sort=alpha|price&order=asc|desc
-              &fuel=<descCarburante>&self=0|1
+              &fuel=<descCarburante>&self=0|1&limit=<n>
       -> impianti within radius km of (lat, lon).
       sort=alpha (default): alphabetical by "Nome Impianto".
       sort=price: cheapest first (ascending) by min(prezzo) of `fuel`
                   (fuel is required for sort=price; self=0/1 optional
                   to restrict to servito/self).
       order flips either sort (asc default, or desc).
+      limit (optional, > 0) keeps only the first n results after sorting;
+      count is the number returned, total the number within the radius.
 """
 import math
 import re
@@ -87,6 +91,7 @@ def row_to_impianto(row):
 
 
 @app.get("/status")
+@app.get("/v1/status")
 def status():
     """
     Stato di aggiornamento dei prezzi.
@@ -138,6 +143,7 @@ def status():
 
 
 @app.get("/gestore/<id_impianto>")
+@app.get("/v1/gestore/<id_impianto>")
 def gestore(id_impianto):
     """
     Dati completi di un gestore/impianto.
@@ -207,6 +213,7 @@ def gestore(id_impianto):
 
 
 @app.get("/aroundme")
+@app.get("/v1/aroundme")
 def aroundme():
     """
     Gestori entro un raggio dalla posizione cliente.
@@ -254,6 +261,11 @@ def aroundme():
         enum: ["0", "1"]
         required: false
         description: filtra isSelf (0=servito, 1=self)
+      - name: limit
+        in: query
+        type: integer
+        required: false
+        description: numero massimo di risultati (dopo l'ordinamento); assente = tutti
     responses:
       200:
         description: Lista impianti entro il raggio
@@ -268,7 +280,12 @@ def aroundme():
             radiusKm: {type: number}
             sort: {type: string}
             order: {type: string}
-            count: {type: integer}
+            count:
+              type: integer
+              description: numero di risultati restituiti
+            total:
+              type: integer
+              description: numero di impianti entro il raggio (prima di limit)
             results:
               type: array
               items:
@@ -311,6 +328,15 @@ def aroundme():
     is_self = request.args.get("self")
     if is_self is not None and is_self not in ("0", "1"):
         return jsonify({"error": "self must be 0 or 1"}), 400
+
+    limit = request.args.get("limit")
+    if limit is not None:
+        try:
+            limit = int(limit)
+        except ValueError:
+            return jsonify({"error": "limit must be an integer"}), 400
+        if limit <= 0:
+            return jsonify({"error": "limit must be > 0"}), 400
 
     db = get_db()
 
@@ -369,12 +395,17 @@ def aroundme():
     else:
         results.sort(key=lambda it: (it["nomeImpianto"] or ""), reverse=(order == "desc"))
 
+    total = len(results)
+    if limit is not None:
+        results = results[:limit]
+
     return jsonify({
         "center": {"lat": lat, "lon": lon},
         "radiusKm": radius_km,
         "sort": sort,
         "order": order,
         "count": len(results),
+        "total": total,
         "results": results,
     })
 

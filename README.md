@@ -49,6 +49,10 @@ cd mypb-api
 
 ## API (`mypb-api/`)
 
+Every endpoint is also served under `/v1/` (e.g. `/v1/aroundme`). The mobile
+apps use the `/v1/` routes, which must stay backward compatible once an app
+version is in the stores; the web frontend keeps using the unprefixed ones.
+
 ### `GET /gestore/<id_impianto>`
 
 Full registry data + all fuel prices for one station.
@@ -69,6 +73,10 @@ Stations within a radius of a point.
 | `order`  | no | `asc` | `asc` / `desc` |
 | `fuel`   | required if `sort=price` | — | e.g. `Benzina`, `Gasolio` |
 | `self`   | no | — | `0` (servito) / `1` (self) |
+| `limit`  | no | — | max results, applied after sorting |
+
+`count` is the number of results returned, `total` the number of stations
+within the radius (they differ only when `limit` cuts the list).
 
 ```bash
 curl "http://localhost:5000/aroundme?lat=37.333935&lon=13.595533&radius=5&sort=price&fuel=Benzina"
