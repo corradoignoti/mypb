@@ -6,6 +6,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY app.py .
+COPY logos/ logos/
 
 # mypb.db is not baked into the image — mount it at runtime (see docker-compose.yml)
 EXPOSE 5000

@@ -28,16 +28,34 @@ compatible once an app version has shipped):
       order flips either sort (asc default, or desc).
       limit (optional, > 0) keeps only the first n results after sorting;
       count is the number returned, total the number within the radius.
+
+  GET /logos/<file>
+      -> brand logo image (SVG). Impianti in /gestore and /aroundme carry
+         bandieraLogo: the file name to fetch here, or null when the brand
+         has no logo (clients then draw their own placeholder).
 """
 import math
+import os
 import re
 import sqlite3
 
 from flasgger import Swagger
-from flask import Flask, g, jsonify, request
+from flask import Flask, g, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 DB_PATH = "mypb.db"
+LOGO_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logos")
+
+# lowercased, trimmed Bandiera -> file in LOGO_DIR (see logos/SOURCES.md)
+BRAND_LOGOS = {
+    "agip eni": "eni.svg",
+    "api-ip": "ip.svg",
+    "q8": "q8.svg",
+    "esso": "esso.svg",
+    "tamoil": "tamoil.svg",
+    "lukoil": "lukoil.svg",
+    "repsol": "repsol.svg",
+}
 
 app = Flask(__name__)
 CORS(app)  # allow frontend/ (served from another origin) to call the API
@@ -80,6 +98,7 @@ def row_to_impianto(row):
         "idImpianto": row["idImpianto"],
         "gestore": row["Gestore"],
         "bandiera": row["Bandiera"],
+        "bandieraLogo": BRAND_LOGOS.get((row["Bandiera"] or "").strip().lower()),
         "tipoImpianto": row["Tipo Impianto"],
         "nomeImpianto": row["Nome Impianto"],
         "indirizzo": row["Indirizzo"],
@@ -166,6 +185,10 @@ def gestore(id_impianto):
             idImpianto: {type: string}
             gestore: {type: string}
             bandiera: {type: string}
+            bandieraLogo:
+              type: string
+              x-nullable: true
+              description: file del logo da scaricare su /logos/{file}; null se il marchio non ha logo
             tipoImpianto: {type: string}
             nomeImpianto: {type: string}
             indirizzo: {type: string}
@@ -294,6 +317,10 @@ def aroundme():
                   idImpianto: {type: string}
                   gestore: {type: string}
                   bandiera: {type: string}
+                  bandieraLogo:
+                    type: string
+                    x-nullable: true
+                    description: file del logo da scaricare su /logos/{file}; null se il marchio non ha logo
                   nomeImpianto: {type: string}
                   distanceKm: {type: number}
                   prezzo: {type: number}
@@ -408,6 +435,33 @@ def aroundme():
         "total": total,
         "results": results,
     })
+
+
+@app.get("/logos/<path:filename>")
+@app.get("/v1/logos/<path:filename>")
+def logo(filename):
+    """
+    Logo di un marchio (bandiera).
+    ---
+    tags:
+      - logos
+    produces:
+      - image/svg+xml
+    parameters:
+      - name: filename
+        in: path
+        type: string
+        required: true
+        description: valore di bandieraLogo restituito da /gestore o /aroundme
+        example: eni.svg
+    responses:
+      200:
+        description: immagine del logo
+      404:
+        description: logo non trovato
+    """
+    # send_from_directory rejects paths escaping LOGO_DIR
+    return send_from_directory(LOGO_DIR, filename, max_age=86400)
 
 
 if __name__ == "__main__":

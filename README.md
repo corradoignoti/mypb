@@ -82,6 +82,23 @@ within the radius (they differ only when `limit` cuts the list).
 curl "http://localhost:5000/aroundme?lat=37.333935&lon=13.595533&radius=5&sort=price&fuel=Benzina"
 ```
 
+### Brand logos
+
+Every station in `/gestore` and `/aroundme` has a `bandieraLogo` field: the
+file name of its brand logo, or `null` when the brand has none. Fetch the
+image from `GET /logos/<file>` (or `/v1/logos/<file>`), e.g.
+`/v1/logos/eni.svg`; responses are cacheable for a day. Clients draw their
+own placeholder when it is `null` (the web frontend shows the brand's
+initial in a circle coloured by a hash of the name).
+
+Logos live in `mypb-api/logos/` and are mapped from the lowercased
+`Bandiera` value in `BRAND_LOGOS` in `app.py`; sources are listed in
+`mypb-api/logos/SOURCES.md`.
+
+```bash
+curl -O "http://localhost:5000/logos/eni.svg"
+```
+
 ### `GET /status`
 
 Prices update status, shown in the frontend footer.

@@ -235,7 +235,7 @@ function renderAroundme(data) {
     tr.title = it.nomeImpianto || "";
     tr.innerHTML = `
       <td class="row-num">${idx + 1}</td>
-      <td>${escapeHtml(it.bandiera || "")}</td>
+      <td><span class="brand-cell">${brandBadge(it)}${escapeHtml(it.bandiera || "")}</span></td>
       <td>${escapeHtml(it.comune || "")}</td>
       <td>${formatNumber(it.distanceKm)}</td>
       <td class="${data.sort === "price" ? "" : "hidden"}">${formatNumber(it.prezzo)}</td>
@@ -297,7 +297,7 @@ function renderGestore(data) {
     <dl>
       <dt>idImpianto</dt><dd>${escapeHtml(data.idImpianto)}</dd>
       <dt>Gestore</dt><dd>${escapeHtml(data.gestore || "")}</dd>
-      <dt>Bandiera</dt><dd>${escapeHtml(data.bandiera || "")}</dd>
+      <dt>Bandiera</dt><dd><span class="brand-cell">${brandBadge(data)}${escapeHtml(data.bandiera || "")}</span></dd>
       <dt>Tipo impianto</dt><dd>${escapeHtml(data.tipoImpianto || "")}</dd>
       <dt>Indirizzo</dt><dd>${escapeHtml(data.indirizzo || "")}</dd>
       <dt>Comune</dt><dd>${escapeHtml(data.comune || "")} (${escapeHtml(data.provincia || "")})</dd>
@@ -410,6 +410,7 @@ function showAroundmeMap(data, centerLat, centerLon) {
       .addTo(aroundmeMapObj)
       .bindPopup(`
         <strong>#${idx + 1} &mdash; ${escapeHtml(it.nomeImpianto || "")}</strong><br>
+        <span class="brand-cell">${brandBadge(it)}${escapeHtml(it.bandiera || "")}</span><br>
         ${escapeHtml(it.gestore || "")}<br>
         ${escapeHtml(it.comune || "")} &mdash; ${formatNumber(it.distanceKm)} km
         ${priceLine}
@@ -554,6 +555,38 @@ function escapeHtml(str) {
     "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;",
   }[c]));
 }
+
+// ---- brand logos ----
+// The API sends bandieraLogo (a file served at <apiBase>/logos/<file>) or
+// null. Brands without a logo, or whose logo fails to load, get a circle
+// with their initial, coloured by a hash of the brand name so the same
+// brand always gets the same colour.
+function brandHue(name) {
+  let h = 0;
+  for (const ch of name) h = (h * 31 + ch.codePointAt(0)) >>> 0;
+  return h % 360;
+}
+
+function brandFallback(bandiera) {
+  const name = String(bandiera || "").trim();
+  const initial = name ? [...name][0].toUpperCase() : "?";
+  return `<span class="brand-logo brand-fallback" style="--brand-hue:${brandHue(name.toLowerCase())}" aria-hidden="true">${escapeHtml(initial)}</span>`;
+}
+
+// fixed-width slot so brand names line up whatever the logo's aspect ratio
+function brandBadge(it) {
+  if (!it.bandieraLogo) return `<span class="brand-slot">${brandFallback(it.bandiera)}</span>`;
+  const src = `${apiBase()}/logos/${encodeURIComponent(it.bandieraLogo)}`;
+  return `<span class="brand-slot"><img class="brand-logo" src="${escapeHtml(src)}" alt="" loading="lazy" data-bandiera="${escapeHtml(it.bandiera || "")}"></span>`;
+}
+
+// image errors don't bubble, so listen in the capture phase
+document.addEventListener("error", (e) => {
+  const img = e.target;
+  if (img instanceof HTMLImageElement && img.classList.contains("brand-logo")) {
+    img.outerHTML = brandFallback(img.dataset.bandiera);
+  }
+}, true);
 
 // formats prices/distances with the Italian decimal comma (e.g. 1.959 -> "1,959")
 function formatNumber(n) {
